@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estudo de Usabilidade — CHIVE vs PAST</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════
+       TELA 1 — ESCOLHA DE FLUXO
+  ════════════════════════════════════════════════════ -->
+  <div id="tela-inicial" class="tela ativa">
+    <div class="container">
+      <h1>Estudo de Usabilidade</h1>
+      <p class="subtitulo">
+        Selecione o modo de execução para este participante.
+        Esta escolha define a ordem e as ferramentas avaliadas.
+      </p>
+
+      <div class="botoes-modo">
+        <button class="btn-modo" onclick="App.iniciarModo('chive_past')">
+          <span class="titulo-modo">Começar com CHIVE</span>
+          <span class="descricao-modo">Fará CHIVE primeiro, depois PAST</span>
+        </button>
+        <button class="btn-modo" onclick="App.iniciarModo('past_chive')">
+          <span class="titulo-modo">Começar com PAST</span>
+          <span class="descricao-modo">Fará PAST primeiro, depois CHIVE</span>
+        </button>
+        <button class="btn-modo" onclick="App.iniciarModo('apenas_chive')">
+          <span class="titulo-modo">Apenas CHIVE</span>
+          <span class="descricao-modo">Somente o fluxo da CHIVE</span>
+        </button>
+        <button class="btn-modo" onclick="App.iniciarModo('apenas_past')">
+          <span class="titulo-modo">Apenas PAST</span>
+          <span class="descricao-modo">Somente o fluxo do PAST</span>
+        </button>
+      </div>
+
+      <hr class="secao-divisor">
+
+      <div class="painel-equipe-inicial">
+        <div class="painel-equipe-inicial-header">
+          <span>⚙ Equipe Técnica</span>
+          <span id="contador-participantes" class="badge-contador">0 participantes salvos</span>
+        </div>
+        <div class="painel-equipe-inicial-acoes">
+          <button class="btn-acao-equipe" onclick="Storage.downloadTodosCSV()">
+            ⬇ Baixar todos os resultados
+          </button>
+          <button class="btn-acao-equipe btn-acao-perigo" onclick="App.confirmarLimparResultados()">
+            🗑 Limpar dados salvos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       TELA 2 — DADOS DEMOGRÁFICOS
+  ════════════════════════════════════════════════════ -->
+  <div id="tela-demografica" class="tela">
+    <div class="container">
+      <h2>Dados do Participante</h2>
+      <p class="subtitulo">Preencha todas as informações antes de começar. Elas serão registradas no CSV de resultados.</p>
+
+      <form id="form-demografico" onsubmit="App.submeterDemograficos(event)">
+
+        <div class="campo-form">
+          <label for="participante-id">ID do Participante</label>
+          <input type="text" id="participante-id" placeholder="Ex: P001" required autocomplete="off">
+        </div>
+
+        <div class="campo-form">
+          <label for="participante-nome">Nome Completo</label>
+          <input type="text" id="participante-nome" placeholder="Nome completo" required autocomplete="off">
+        </div>
+
+        <hr class="secao-divisor">
+
+        <div class="campo-form">
+          <label>Nível de Educação</label>
+          <div class="opcoes-radio">
+            <label><input type="radio" name="educacao" value="Graduação"><span>Graduação</span></label>
+            <label><input type="radio" name="educacao" value="Mestrado"><span>Mestrado</span></label>
+            <label><input type="radio" name="educacao" value="Doutorado"><span>Doutorado</span></label>
+            <label><input type="radio" name="educacao" value="Pós-doutorado"><span>Pós-doutorado</span></label>
+            <label><input type="radio" name="educacao" value="Outro"><span>Outro</span></label>
+          </div>
+          <span class="erro-validacao" id="erro-educacao">Selecione o nível de educação.</span>
+        </div>
+
+        <div class="campo-form">
+          <label>Área de Formação</label>
+          <div class="opcoes-radio">
+            <label><input type="radio" name="area" value="Computação / Sistemas de Informação / TI"><span>Computação / Sistemas de Informação / TI</span></label>
+            <label><input type="radio" name="area" value="Engenharia (exceto Computação)"><span>Engenharia (exceto Computação)</span></label>
+            <label><input type="radio" name="area" value="Ciências Exatas (Matemática, Física, Estatística)"><span>Ciências Exatas (Matemática, Física, Estatística)</span></label>
+            <label><input type="radio" name="area" value="Ciências Humanas ou Sociais"><span>Ciências Humanas ou Sociais</span></label>
+            <label><input type="radio" name="area" value="Ciências Biológicas ou da Saúde"><span>Ciências Biológicas ou da Saúde</span></label>
+            <label><input type="radio" name="area" value="Outra"><span>Outra</span></label>
+          </div>
+          <span class="erro-validacao" id="erro-area">Selecione a área de formação.</span>
+        </div>
+
+        <div class="campo-form">
+          <label>Ferramentas de Dados Já Usadas <span style="font-weight:400;color:#a0aec0">(marque ao menos uma)</span></label>
+          <div class="opcoes-checkbox">
+            <label><input type="checkbox" name="ferramenta" value="Excel / Google Sheets"><span>Excel / Google Sheets</span></label>
+            <label><input type="checkbox" name="ferramenta" value="Power BI"><span>Power BI</span></label>
+            <label><input type="checkbox" name="ferramenta" value="Tableau"><span>Tableau</span></label>
+            <label><input type="checkbox" name="ferramenta" value="Python (pandas, matplotlib etc.)"><span>Python (pandas, matplotlib etc.)</span></label>
+            <label><input type="checkbox" name="ferramenta" value="R"><span>R</span></label>
+            <label><input type="checkbox" name="ferramenta" value="PAST"><span>PAST</span></label>
+            <label><input type="checkbox" name="ferramenta" value="PRIMER-e"><span>PRIMER-e</span></label>
+            <label><input type="checkbox" name="ferramenta" value="Nunca usei nenhuma ferramenta de dados"><span>Nunca usei nenhuma ferramenta de dados</span></label>
+          </div>
+          <span class="erro-validacao" id="erro-ferramentas">Selecione ao menos uma opção.</span>
+        </div>
+
+        <button type="submit" class="btn btn-primario">Continuar →</button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       TELA 3 — VÍDEO INTRODUTÓRIO
+  ════════════════════════════════════════════════════ -->
+  <div id="tela-video" class="tela">
+    <div class="container">
+      <div class="tarefa-header">
+        <span class="ferramenta-badge" id="video-badge">CHIVE</span>
+        <span class="progresso-texto">Introdução</span>
+      </div>
+
+      <h2 id="video-titulo">Introdução ao CHIVE</h2>
+      <p class="subtitulo" id="video-subtitulo">Assista ao vídeo antes de iniciar as tarefas.</p>
+
+      <div class="video-container">
+        <div class="video-placeholder" id="video-placeholder">
+          <span class="video-placeholder-icone">▶</span>
+          <span id="video-placeholder-txt">Vídeo não configurado</span>
+        </div>
+        <video id="video-player" controls style="display:none;"></video>
+      </div>
+
+      <p class="nota-instrucao">
+        Após assistir ao vídeo, clique em <strong>Iniciar Tarefas</strong> para começar.
+        O cronômetro de cada tarefa só começa quando a tela da tarefa aparecer.
+      </p>
+
+      <button class="btn btn-primario" onclick="App.iniciarTarefas()">Iniciar Tarefas →</button>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       TELA 4 — TAREFA
+  ════════════════════════════════════════════════════ -->
+  <div id="tela-tarefa" class="tela">
+    <div class="container">
+      <div class="tarefa-header">
+        <span class="ferramenta-badge" id="tarefa-ferramenta-badge"></span>
+        <span class="progresso-texto" id="tarefa-progresso"></span>
+      </div>
+
+      <h2 id="tarefa-titulo"></h2>
+      <div class="enunciado-tarefa" id="tarefa-enunciado"></div>
+
+      <!-- Área de input (renderizada dinamicamente) -->
+      <div id="tarefa-input-area"></div>
+
+      <span class="erro-validacao" id="erro-tarefa">Por favor, preencha a resposta antes de continuar.</span>
+
+      <br>
+      <button id="btn-responder" class="btn btn-primario" onclick="App.responderTarefa()">Responder →</button>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       TELA 5 — QUESTIONÁRIO SUS
+  ════════════════════════════════════════════════════ -->
+  <div id="tela-sus" class="tela">
+    <div class="container">
+      <div class="tarefa-header">
+        <span class="ferramenta-badge" id="sus-ferramenta-badge"></span>
+        <span class="progresso-texto">Questionário SUS</span>
+      </div>
+
+      <h2>Avaliação de Usabilidade (SUS)</h2>
+      <p class="subtitulo">
+        Indique o quanto você concorda com cada afirmação sobre o
+        <strong id="sus-ferramenta-nome"></strong>.
+      </p>
+
+      <div class="sus-legenda">
+        <span>1 — Discordo totalmente</span>
+        <span>5 — Concordo totalmente</span>
+      </div>
+
+      <form id="form-sus" onsubmit="App.submeterSUS(event)">
+        <div id="sus-perguntas"></div>
+
+        <span class="erro-validacao" id="erro-sus">Responda todas as 10 perguntas antes de continuar.</span>
+        <br>
+        <button type="submit" class="btn btn-primario">Enviar avaliação →</button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       TELA 6 — PERGUNTAS ABERTAS
+  ════════════════════════════════════════════════════ -->
+  <div id="tela-perguntas-abertas" class="tela">
+    <div class="container">
+      <div class="tarefa-header">
+        <span class="ferramenta-badge" id="abertas-ferramenta-badge"></span>
+        <span class="progresso-texto">Perguntas Abertas</span>
+      </div>
+
+      <h2>Sua experiência com <span id="abertas-ferramenta-nome"></span></h2>
+      <p class="subtitulo">Responda com suas próprias palavras. Não há respostas certas ou erradas.<br>
+        <span style="color:#a0aec0; font-size:0.9em;">Todos os campos são opcionais.</span>
+      </p>
+
+      <form id="form-abertas" onsubmit="App.submeterPerguntasAbertas(event)">
+
+        <div class="campo-form">
+          <label id="abertas-q1-label"></label>
+          <textarea id="abertas-q1" rows="4"
+                    placeholder="Descreva com suas palavras..."></textarea>
+        </div>
+
+        <div class="campo-form">
+          <label id="abertas-q2-label"></label>
+          <textarea id="abertas-q2" rows="4"
+                    placeholder="Descreva pontos positivos e negativos..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primario">Continuar →</button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       TELA 7 — TRANSIÇÃO ENTRE FERRAMENTAS
+  ════════════════════════════════════════════════════ -->
+  <div id="tela-transicao" class="tela">
+    <div class="container" style="text-align:center;">
+      <div class="transicao-icone">✓</div>
+      <h2>Primeira ferramenta concluída!</h2>
+      <p class="subtitulo">
+        Você finalizou as tarefas, o questionário e as perguntas abertas
+        da primeira ferramenta. Pode fazer uma pausa antes de continuar.
+      </p>
+      <p>Próxima ferramenta:</p>
+      <div class="proxima-ferramenta" id="transicao-proxima-nome"></div>
+      <br>
+      <button class="btn btn-primario" onclick="App.continuarParaProximaFerramenta()">
+        Continuar →
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       TELA 8 — TELA FINAL
+  ════════════════════════════════════════════════════ -->
+  <div id="tela-final" class="tela">
+    <div class="container" style="text-align:center;">
+      <div style="font-size:72px; line-height:1; margin-bottom:20px;">✓</div>
+      <h2>Sessão concluída!</h2>
+      <p class="subtitulo">
+        Obrigado pela participação!<br>
+        Suas respostas foram registradas com sucesso.
+      </p>
+      <br>
+      <button class="btn btn-primario" onclick="App.voltarAoMenu()">← Voltar ao menu</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       PAINEL EQUIPE TÉCNICA (fixo, discreto)
+  ════════════════════════════════════════════════════ -->
+  <div id="painel-equipe" class="painel-equipe" style="display:none;">
+    <div class="painel-equipe-card">
+      <div class="painel-equipe-header">
+        <span>Equipe Técnica</span>
+        <button class="painel-equipe-fechar" onclick="App.fecharPainelEquipe()" title="Fechar">✕</button>
+      </div>
+      <div class="resumo-final" id="resumo-final"></div>
+      <button class="btn btn-primario" style="width:100%;" onclick="Storage.downloadCSV()">
+        ⬇ Baixar CSV
+      </button>
+    </div>
+  </div>
+
+  <button id="btn-equipe" class="btn-equipe-toggle" onclick="App.abrirPainelEquipe()" title="Equipe técnica" style="display:none;">
+    ⚙
+  </button>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       MODAL — RECUPERAÇÃO DE SESSÃO
+  ════════════════════════════════════════════════════ -->
+  <div id="modal-recuperacao" class="modal-overlay" role="alertdialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-icone">💾</div>
+      <h2>Sessão interrompida</h2>
+      <p>Foi encontrada uma sessão salva.<br>Deseja continuar de onde parou?</p>
+      <p id="recuperacao-info" style="font-size:13px; color:#4a5568; background:#f7fafc;
+         border:1px solid #e2e8f0; border-radius:7px; padding:8px 12px; margin-bottom:20px;"></p>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <button class="btn btn-primario" onclick="App.restaurarSessao()">
+          Continuar sessão
+        </button>
+        <button class="btn" style="background:#edf2f7; color:#4a5568;"
+                onclick="App.descartarSessao()">
+          Nova sessão
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       MODAL — TEMPO ESGOTADO (T4)
+  ════════════════════════════════════════════════════ -->
+  <div id="modal-tempo-esgotado" class="modal-overlay" role="alertdialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-icone">⏱</div>
+      <h2>Tempo esgotado!</h2>
+      <p>
+        Obrigado por explorar o dataset.<br>
+        Suas observações foram registradas.
+      </p>
+      <button class="btn btn-primario" onclick="App.fecharAlertaTempoEsgotado()">
+        Continuar →
+      </button>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
